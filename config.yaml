@@ -1,0 +1,13 @@
+global:
+  verbose: true
+  debug: true
+jobs:
+- name: 1116-monthly-by-day
+  metrics: UnblendedCost
+  granularity: daily
+  refresh: 5
+  delta: 30
+  metric_labels: {
+    'account_no': '1116'
+  }
+  credentials: {}
