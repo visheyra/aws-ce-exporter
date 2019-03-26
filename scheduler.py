@@ -1,14 +1,14 @@
-import signal
-import sys
 import schedule
 import ce_job
 import datetime
 import credentials
 
+
 def run_scheduler(config, data_queue):
     jobs = [_create_target(job) for job in config['jobs']]
     for j in jobs:
         schedule.every(int(j.refresh)).seconds.do(j.execute, data_queue)
+
 
 def _create_target(target_config):
     now = datetime.datetime.utcnow()

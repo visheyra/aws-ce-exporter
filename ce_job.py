@@ -1,8 +1,10 @@
 import boto3
 
+
 class CostExplorerJob:
 
-    def __init__(self, labels, credentials, name, metrics, granularity, start, end, refresh=5):
+    def __init__(self, labels, credentials, name, metrics,
+                 granularity, start, end, refresh=5):
         print('im generated')
         self.labels = labels
         self.name = name
@@ -14,7 +16,8 @@ class CostExplorerJob:
         self.request_error = 0
         self.refresh = refresh
         self.metrics = metrics
-        # Billing is only available in the us-east region, so no reason to ask for the region
+        # Billing is only available in the us-east region, so no reason to ask
+        # for the region
         self.session = CostExplorerJob._make_session(self.credentials)
 
     @staticmethod
@@ -22,12 +25,11 @@ class CostExplorerJob:
         try:
             key_id, secret_id, session_token = credentials.load_credentials()
             client = boto3.client("ce",
-                aws_access_key_id=key_id,
-                aws_secret_key_id=secret_id,
-                aws_session_token=session_token
-            )
+                                  aws_access_key_id=key_id,
+                                  aws_secret_key_id=secret_id,
+                                  aws_session_token=session_token)
             return client
-        except:
+        except ValueError:
             return boto3.client("ce")
 
     def execute(self, queue):
@@ -38,9 +40,14 @@ class CostExplorerJob:
             if token:
                 kwargs = {'NextPageToken': token}
             else:
-               kwargs = {}
+                kwargs = {}
             try:
-                data = self.session.get_cost_and_usage(TimePeriod=self.TimePeriod, Granularity=self.granularity, Metrics=[self.metrics], GroupBy=[{'Type': 'DIMENSION', 'Key': 'SERVICE'}], **kwargs)
+                data = self.session.get_cost_and_usage(
+                    TimePeriod=self.TimePeriod,
+                    Granularity=self.granularity,
+                    Metrics=[self.metrics],
+                    GroupBy=[{'Type': 'DIMENSION', 'Key': 'SERVICE'}],
+                    **kwargs)
                 results += data['ResultsByTime']
                 token = data.get('NextPageToken')
                 if not token:
@@ -51,7 +58,7 @@ class CostExplorerJob:
                 break
             else:
                 self.request_success += 1
-        x = queue.put({
+        queue.put({
             'metric_labels': self.labels,
             'name': self.name,
             'error_request_count': self.request_error,

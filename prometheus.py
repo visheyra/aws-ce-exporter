@@ -1,5 +1,6 @@
 import prometheus_client
 
+
 class Exporter:
 
     def __init__(self, config):
@@ -29,14 +30,17 @@ class Exporter:
 
         print(labels)
         print(values)
-        real_name = name.replace(' ', '_').replace('-', '').replace('__', '_').lower()
+        real_name = name.replace(
+            ' ', '_').replace(
+                '-', '').replace(
+                    '__', '_').lower()
         gauge = None
-        try: # try to get the counter
+        try:  # try to get the counter
             gauge = self.exposed[real_name]
-        except: # the counter does not exist we create it
+        except KeyError:  # the counter does not exist we create it
             gauge = prometheus_client.Gauge(real_name, "", labels)
             self.exposed[real_name] = gauge
-        
+
         # finally we set the value here
         gauge.labels(*values).set(value)
 
