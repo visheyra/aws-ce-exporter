@@ -6,7 +6,7 @@ and also default aws credentials
 import boto3
 
 ROLE_OBJECT_KEYS = ["role_arn", "session_name"]
-CREDETIALS_OBJECT_KEYS = ["aws_access_key_id", "aws_secret_key_id"]
+CREDETIALS_OBJECT_KEYS = ["aws_access_key_id", "aws_secret_access_key"]
 
 
 class Credentials:
@@ -20,7 +20,7 @@ class Credentials:
             self._assume_role_provider(self.config)
         elif all(name in self.config for name in CREDETIALS_OBJECT_KEYS):
             self.access_key_id = self.config["aws_access_key_id"]
-            self.secret_key_id = self.config["aws_secret_key_id"]
+            self.secret_key_id = self.config["aws_secret_access_key"]
             self.session_token = ""
         else:
             print("can't load any credentials for config")
@@ -38,7 +38,7 @@ class Credentials:
         self.secret_key_id = assume_role['Credentials']['SecretAccessKey']
         self.session_token = assume_role['Credentials']['SessionToken']
 
-    def get_credentials(self, config):
+    def get_credentials(self):
         if self.access_key_id is None or self.secret_key_id is None:
             raise ValueError("Credentials not found")
         else:

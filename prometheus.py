@@ -33,7 +33,9 @@ class Exporter:
         real_name = name.replace(
             ' ', '_').replace(
                 '-', '').replace(
-                    '__', '_').lower()
+                    '__', '_').replace(
+                        '(', '').replace(
+                            ')', '').lower()
         gauge = None
         try:  # try to get the counter
             gauge = self.exposed[real_name]

@@ -26,14 +26,14 @@ def main():
     run_scheduler(config, q)
     while True:
         schedule.run_pending()
-        try:
-            d = q.get(False)
-        except multiprocessing.queues.Empty:
-            pass
-        else:
-            print(json.dumps(d, indent=4))
-            prom.hand_out(d)
-        time.sleep(5)
+        while True:
+            try:
+                d = q.get(False)
+                print('get report from {}'.format(d['name']))
+                prom.hand_out(d)
+            except multiprocessing.queues.Empty:
+                time.sleep(5)
+                break
 
 
 if __name__ == '__main__':

@@ -2,7 +2,6 @@ import boto3
 
 
 class CostExplorerJob:
-
     def __init__(self, labels, credentials, name, metrics,
                  granularity, start, end, refresh=5):
         print('im generated')
@@ -23,10 +22,10 @@ class CostExplorerJob:
     @staticmethod
     def _make_session(credentials):
         try:
-            key_id, secret_id, session_token = credentials.load_credentials()
+            key_id, secret_id, session_token = credentials.get_credentials()
             client = boto3.client("ce",
                                   aws_access_key_id=key_id,
-                                  aws_secret_key_id=secret_id,
+                                  aws_secret_access_key=secret_id,
                                   aws_session_token=session_token)
             return client
         except ValueError:
